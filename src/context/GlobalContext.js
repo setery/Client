@@ -50,9 +50,9 @@ export const GlobalProvider = (props) => {
   // action: get current user
   const getCurrentUser = async () => {
     try {
-      const res = await axios.get("/api/auth/current");
+      const res = await axios.get("/auth/current");
       if (res.data) {
-        const toDosRes = await axios.get("/api/todos/current"); //fix
+        const toDosRes = await axios.get("/data/current"); //fix
         if (toDosRes.data) {
           dispatch({ type: "SET_USER", payload: res.data });
           dispatch({
