@@ -251,3 +251,27 @@ button, input, textarea{
         transform: scale(1);
     }
 }
+
+.new{
+    display: flex;
+    align-items: center;
+    padding: 15px;
+    background-color: $dark-ligth;
+    margin-bottom: 30px;
+    border-radius: 5px;
+
+    input{
+        width: 100%;
+        margin-right: 20px;
+        font-size: 1.125rem;
+        padding: 9px 15px;
+        background-color: $dark;
+        border: none;
+        border-radius: 5px;
+        color: $white;
+
+        &:focus{
+            outline: none;
+        }
+    }
+}
