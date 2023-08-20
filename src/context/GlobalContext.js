@@ -47,6 +47,7 @@ export const GlobalProvider = (props) => {
   useEffect(() => {
     getCurrentUser();
   }, []);
+
   // action: get current user
   const getCurrentUser = async () => {
     try {
@@ -68,7 +69,6 @@ export const GlobalProvider = (props) => {
         dispatch({ type: "RESET_USER" });
       }
     } catch (err) {
-      console.log(err);
       dispatch({ type: "RESET_USER" });
     }
   };
@@ -77,7 +77,6 @@ export const GlobalProvider = (props) => {
       await axios.put("/auth/logout");
       dispatch({ type: "RESET_USER" });
     } catch (err) {
-      console.log(err);
       dispatch({ type: "RESET_USER" });
     }
   };
@@ -88,11 +87,43 @@ export const GlobalProvider = (props) => {
       payload: [toDo, ...state.incompleteToDos],
     });
   };
+
+  const toDoComplete = (toDo) => {
+    
+    const newArray = state.incompleteToDos.filter(item => !toDo.uuid.includes(item.uuid));
+
+    dispatch({
+      type: "SET_INCOMPLETE_TODOS",
+      payload: newArray,
+    });
+
+    dispatch({
+      type: "SET_COMPLETE_TODOS",
+      payload: [toDo, ...state.completeToDos],
+    });
+  };
+
+  const toDoIncomplete = (toDo) => {
+
+    const newArray = state.completeToDos.filter(item => !toDo.uuid.includes(item.uuid));
+
+    dispatch({
+      type: "SET_COMPLETE_TODOS",
+      payload: newArray,
+    });
+    dispatch({
+      type: "SET_INCOMPLETE_TODOS",
+      payload: [toDo, ...state.incompleteToDos],
+    });
+  };
+
   const value = {
     ...state,
     getCurrentUser,
     logout,
     addToDo,
+    toDoComplete,
+    toDoIncomplete,
   };
 
   return (
