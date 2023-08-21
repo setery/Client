@@ -1,13 +1,12 @@
-import React, { useTransition } from "react";
+import React from "react";
 import axios from "axios";
 import { useGlobalContext } from "../context/GlobalContext";
 
 const ToDoCard = ({ toDo }) => {
-  
   const [content, setContent] = React.useState(toDo.content);
   const [editing, setEditing] = React.useState(false);
   const input = React.useRef(null);
-  const {toDoComplete, toDoIncomplete} = useGlobalContext();
+  const { toDoComplete, toDoIncomplete, removeToDo, updateToDo } = useGlobalContext();
 
   const onEdit = (e) => {
     e.preventDefault();
@@ -27,15 +26,36 @@ const ToDoCard = ({ toDo }) => {
     e.preventDefault();
     axios.put(`/data/${toDo.uuid}/complete`).then((res) => {
       toDoComplete(res.data);
-    })
+    });
   };
 
   const markAsIncomplete = (e) => {
     e.preventDefault();
     axios.put(`/data/${toDo.uuid}/incomplete`).then((res) => {
       toDoIncomplete(res.data);
-    })
+    });
   };
+
+  const deleteToDo = (e) => {
+    e.preventDefault();
+
+    if(window.confirm("Sure you want to delete this ToDo?")){
+      axios.delete(`/data/${toDo.uuid}`).then(()=>{
+        removeToDo(toDo);
+      })
+    }
+  };
+
+  const editToDo = (e) => {
+    e.preventDefault();
+
+    axios.put(`/data/${toDo.uuid}`, {content}).then(res =>{
+      updateToDo(res.data);
+      setEditing(false);
+    }).catch(()=>{
+      stopEditing();
+    })
+  }
 
   return (
     <div className={`todo ${toDo.complete ? "todo--complete" : ""}`}>
@@ -56,13 +76,13 @@ const ToDoCard = ({ toDo }) => {
       <div className="todo__controls">
         {!editing ? (
           <>
-            {!toDo.complete && <button onClick={onEdit}>Edit</button>}
-            <button>Delete</button>
+            {(!toDo.complete) && <button onClick={onEdit}>Edit</button>}
+            <button onClick={deleteToDo}>Delete</button>
           </>
         ) : (
           <>
             <button onClick={stopEditing}>Cancel</button>
-            <button>Save</button>
+            <button onClick={editToDo}>Save</button>
           </>
         )}
       </div>

@@ -13,16 +13,29 @@ const AuthBox = ({ register }) => {
   const [loading, setLoading] = React.useState(false);
   const [errors, setErrors] = React.useState({});
 
+  const handleReset = () => {
+    setEmail("");
+    setPassword("");
+    setConfirmPassword("");
+    setName("");
+    setLoading("");
+    setErrors("");
+  };
   React.useEffect(() => {
     if (user && navigate) {
       navigate("/dashboard");
     }
+    if(navigate){
+      handleReset();
+    }
   }, [user, navigate]);
+
   const onSubmit = (e) => {
     e.preventDefault();
     setLoading(true);
 
     let data = {};
+
     if (register) {
       data = {
         name,
@@ -39,7 +52,6 @@ const AuthBox = ({ register }) => {
     axios
       .post(register ? "/auth/register" : "/auth/login", data)
       .then(() => {
-        //TODO
         getCurrentUser();
       })
       .catch((err) => {
@@ -65,7 +77,7 @@ const AuthBox = ({ register }) => {
                 value={name}
                 onChange={(e) => setName(e.target.value)}
               />
-              {errors.name && <p className="auth__error">{error.name}</p>}
+              {errors.name && <p className="auth__error">{errors.name}</p>}
             </div>
           )}
           <div className="auth__field">
@@ -75,7 +87,7 @@ const AuthBox = ({ register }) => {
               value={email}
               onChange={(e) => setEmail(e.target.value)}
             />
-            {errors.email && <p className="auth__error">{error.email}</p>}
+            {errors.email && <p className="auth__error">{errors.email}</p>}
           </div>
           <div className="auth__field">
             <label>Password</label>
@@ -84,7 +96,9 @@ const AuthBox = ({ register }) => {
               value={password}
               onChange={(e) => setPassword(e.target.value)}
             />
-            {errors.password && <p className="auth__error">{error.password}</p>}
+            {errors.password && (
+              <p className="auth__error">{errors.password}</p>
+            )}
           </div>
           {register && (
             <div className="auth__field">
@@ -95,7 +109,7 @@ const AuthBox = ({ register }) => {
                 onChange={(e) => setConfirmPassword(e.target.value)}
               />
               {errors.confirmPassword && (
-                <p className="auth__error">{error.confirmPassword}</p>
+                <p className="auth__error">{errors.confirmPassword}</p>
               )}
             </div>
           )}
